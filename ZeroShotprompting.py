@@ -6,7 +6,7 @@ load_dotenv()
 client = OpenAI()
 
 
-//ZERO SHOT prompting 
+#ZERO SHOT prompting 
 completion = client.chat.completions.create(
     model="gpt-5.2",
     messages=[
