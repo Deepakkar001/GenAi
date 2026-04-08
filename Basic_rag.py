@@ -41,61 +41,63 @@ embedder = OpenAIEmbeddings(
 
 # create a QdrantClient instance and inject the embedding model into the vector store
 
-# vector_store = QdrantVectorStore.from_documents(
-#     documents=[],
-#     url="http://localhost:6333",
-#     collection_name="loyaltyos",
-#     embedding=embedder,
-# )
-
-# vector_store.add_documents(documents=split_docs)
-
-retriever = QdrantVectorStore.from_existing_collection(
+vector_store = QdrantVectorStore.from_documents(
+    documents=[],
     url="http://localhost:6333",
     collection_name="loyaltyos",
     embedding=embedder,
 )
+
+vector_store.add_documents(documents=split_docs)
+
+print("Documents added to the vector store successfully.")
+
+# retriever = QdrantVectorStore.from_existing_collection(
+#     url="http://localhost:6333",
+#     collection_name="loyaltyos",
+#     embedding=embedder,
+# )
 question = input("Enter your question: ")
 #extracting the relevant chunks from the vector store
-relevant_chunks = retriever.similarity_search(query=question)
+# relevant_chunks = retriever.similarity_search(query=question)
 
 #storing the content of the relevant chunks in a list
-contents = [doc.page_content for doc in relevant_chunks]
+# contents = [doc.page_content for doc in relevant_chunks]
 
 #writing the system prompt for the RAG model
-SYSTEM_PROMPT = f"""
-You are a helpful assistant who is expert in answering the question based on the given context.
+# SYSTEM_PROMPT = f"""
+# You are a helpful assistant who is expert in answering the question based on the given context.
 
-#added the content of the relevant chunks in the system prompt
-content: {contents}
+# #added the content of the relevant chunks in the system prompt
+# content: {contents}
 
 
-Rules:
-1. Always answer the question based on the given content.
-2. If you don't know the answer based on the given content then say "I don't know" and don't try to answer the question.
-3. Always try to answer the question in a concise manner.
+# Rules:
+# 1. Always answer the question based on the given content.
+# 2. If you don't know the answer based on the given content then say "I don't know" and don't try to answer the question.
+# 3. Always try to answer the question in a concise manner.
 
-Example:
-Question: What is loyaltyos?
-Answer: LoyaltyOS is a customer loyalty management platform that helps businesses create and manage customer loyalty programs. It provides features such as customer segmentation, personalized rewards, and analytics to help businesses increase customer retention and engagement.
+# Example:
+# Question: What is loyaltyos?
+# Answer: LoyaltyOS is a customer loyalty management platform that helps businesses create and manage customer loyalty programs. It provides features such as customer segmentation, personalized rewards, and analytics to help businesses increase customer retention and engagement.
 
-Question: What is the capital of France?
-Answer: I don't know.
+# Question: What is the capital of France?
+# Answer: I don't know.
 
-Question: What is the weather of new york?
-Answer: I don't know.
+# Question: What is the weather of new york?
+# Answer: I don't know.
 
-question: What is the main feature of loyaltyos?
-Answer: The main feature of LoyaltyOS is its ability to create and manage customer loyalty programs.
+# question: What is the main feature of loyaltyos?
+# Answer: The main feature of LoyaltyOS is its ability to create and manage customer loyalty programs.
 
-"""
-messages = [
-    {"role": "system", "content": SYSTEM_PROMPT},
-    {"role": "user", "content": question},
-]
-response = client.chat.completions.create(
-        model="gpt-4o-mini",  # or another JSON-capable model in your account
-        # response_format={"type": "json_object"},
-        messages=messages
-    )
-print(response.choices[0].message.content)
+# """
+# messages = [
+#     {"role": "system", "content": SYSTEM_PROMPT},
+#     {"role": "user", "content": question},
+# ]
+# response = client.chat.completions.create(
+#         model="gpt-4o-mini",  # or another JSON-capable model in your account
+#         # response_format={"type": "json_object"},
+#         messages=messages
+#     )
+# print(response.choices[0].message.content)
